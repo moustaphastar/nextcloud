@@ -28,6 +28,7 @@ import com.facebook.testing.screenshot.Screenshot;
 import com.owncloud.android.AbstractIT;
 import com.owncloud.android.R;
 import com.owncloud.android.ui.activity.FileDisplayActivity;
+import com.owncloud.android.ui.fragment.ExtendedListFragment;
 import com.owncloud.android.utils.ScreenshotTest;
 
 import org.junit.Rule;
@@ -53,20 +54,53 @@ public class FileDisplayActivityScreenshotIT extends AbstractIT {
     @ScreenshotTest
     public void open() {
         FileDisplayActivity sut = activityRule.launchActivity(null);
+        assert sut.getListOfFilesFragment() != null;
 
         sut.getListOfFilesFragment().setFabEnabled(false);
-        sut.getListOfFilesFragment().setEmptyListLoadingMessage();
+        sut.getListOfFilesFragment().setEmptyListMessage(ExtendedListFragment.SearchType.NO_SEARCH);
 
         Screenshot.snapActivity(sut).record();
     }
 
     @Test
     @ScreenshotTest
+    public void fabEnabled() {
+        FileDisplayActivity sut = activityRule.launchActivity(null);
+        assert sut.getListOfFilesFragment() != null;
+
+        sut.getListOfFilesFragment().setLoading(false);
+        sut.getListOfFilesFragment().setFabEnabled(true);
+        sut.getListOfFilesFragment().setEmptyListMessage(ExtendedListFragment.SearchType.NO_SEARCH);
+
+        Screenshot.snapActivity(sut).record();
+    }
+
+    @Test
+    @ScreenshotTest
+    public void allSearchTypes() {
+        FileDisplayActivity sut = activityRule.launchActivity(null);
+        assert sut.getListOfFilesFragment() != null;
+
+        for (ExtendedListFragment.SearchType searchType : ExtendedListFragment.SearchType.values()) {
+            sut.getListOfFilesFragment().setLoading(false);
+            sut.getListOfFilesFragment().setEmptyListMessage(searchType);
+
+            Screenshot.snapActivity(sut)
+                .setName(searchType.name())
+                .record();
+        }
+
+    }
+
+    @Test
+    @ScreenshotTest
     public void drawer() {
         FileDisplayActivity sut = activityRule.launchActivity(null);
+        assert sut.getListOfFilesFragment() != null;
 
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
 
+        sut.getListOfFilesFragment().setLoading(false);
         sut.getListOfFilesFragment().setFabEnabled(false);
         sut.getListOfFilesFragment().setEmptyListLoadingMessage();
 
