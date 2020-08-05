@@ -22,7 +22,6 @@
 
 package com.owncloud.android.ui.dialog;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
@@ -52,17 +51,12 @@ import java.util.Objects;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.rule.GrantPermissionRule;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 public class DialogFragmentIT extends AbstractIT {
     @Rule public IntentsTestRule<FileDisplayActivity> activityRule =
         new IntentsTestRule<>(FileDisplayActivity.class, true, false);
-
-    @Rule
-    public final GrantPermissionRule permissionRule = GrantPermissionRule.grant(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     @Test
     @ScreenshotTest
