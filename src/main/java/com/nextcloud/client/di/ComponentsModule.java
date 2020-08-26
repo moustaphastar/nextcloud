@@ -72,9 +72,9 @@ import com.owncloud.android.ui.fragment.ExtendedListFragment;
 import com.owncloud.android.ui.fragment.FileDetailActivitiesFragment;
 import com.owncloud.android.ui.fragment.FileDetailFragment;
 import com.owncloud.android.ui.fragment.FileDetailSharingFragment;
+import com.owncloud.android.ui.fragment.GalleryFragment;
 import com.owncloud.android.ui.fragment.LocalFileListFragment;
 import com.owncloud.android.ui.fragment.OCFileListFragment;
-import com.owncloud.android.ui.fragment.PhotoFragment;
 import com.owncloud.android.ui.fragment.contactsbackup.ContactListFragment;
 import com.owncloud.android.ui.fragment.contactsbackup.ContactsBackupFragment;
 import com.owncloud.android.ui.preview.PreviewImageActivity;
@@ -150,8 +150,12 @@ abstract class ComponentsModule {
     @ContributesAndroidInjector abstract PreviewTextFragment previewTextFragment();
 
     @ContributesAndroidInjector abstract PreviewTextFileFragment previewTextFileFragment();
-    @ContributesAndroidInjector abstract PreviewTextStringFragment previewTextStringFragment();
-    @ContributesAndroidInjector abstract PhotoFragment photoFragment();
+
+    @ContributesAndroidInjector
+    abstract PreviewTextStringFragment previewTextStringFragment();
+
+    @ContributesAndroidInjector
+    abstract GalleryFragment photoFragment();
 
     @ContributesAndroidInjector abstract MultipleAccountsDialog multipleAccountsDialog();
     @ContributesAndroidInjector abstract ReceiveExternalFilesActivity.DialogInputUploadFilename dialogInputUploadFilename();

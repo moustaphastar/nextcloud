@@ -81,8 +81,8 @@ import com.owncloud.android.ui.events.AccountRemovedEvent;
 import com.owncloud.android.ui.events.ChangeMenuEvent;
 import com.owncloud.android.ui.events.DummyDrawerEvent;
 import com.owncloud.android.ui.events.SearchEvent;
+import com.owncloud.android.ui.fragment.GalleryFragment;
 import com.owncloud.android.ui.fragment.OCFileListFragment;
-import com.owncloud.android.ui.fragment.PhotoFragment;
 import com.owncloud.android.ui.trashbin.TrashbinActivity;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.DrawerMenuUtil;
@@ -331,7 +331,7 @@ public abstract class DrawerActivity extends ToolbarActivity
             case R.id.nav_all_files:
                 showFiles(false);
                 if ((this instanceof FileDisplayActivity) &&
-                    !(((FileDisplayActivity) this).getListOfFilesFragment() instanceof PhotoFragment)) {
+                    !(((FileDisplayActivity) this).getListOfFilesFragment() instanceof GalleryFragment)) {
                     ((FileDisplayActivity) this).browseToRoot();
                     EventBus.getDefault().post(new ChangeMenuEvent());
                 } else {
@@ -346,7 +346,7 @@ public abstract class DrawerActivity extends ToolbarActivity
                 handleSearchEvents(new SearchEvent("", SearchRemoteOperation.SearchType.FAVORITE_SEARCH),
                                    menuItem.getItemId());
                 break;
-            case R.id.nav_photos:
+            case R.id.nav_gallery:
                 startPhotoSearch(menuItem);
                 break;
             case R.id.nav_on_device:
@@ -452,7 +452,7 @@ public abstract class DrawerActivity extends ToolbarActivity
 
     private void handleSearchEvents(SearchEvent searchEvent, int menuItemId) {
         if (this instanceof FileDisplayActivity) {
-            if (((FileDisplayActivity) this).getListOfFilesFragment() instanceof PhotoFragment) {
+            if (((FileDisplayActivity) this).getListOfFilesFragment() instanceof GalleryFragment) {
                 Intent intent = new Intent(getApplicationContext(), FileDisplayActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.setAction(Intent.ACTION_SEARCH);
