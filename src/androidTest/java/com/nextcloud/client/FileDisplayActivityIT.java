@@ -155,4 +155,15 @@ public class FileDisplayActivityIT extends AbstractOnServerIT {
         shortSleep();
         assertEquals(getStorageManager().getFileByPath("/"), sut.getCurrentDir());
     }
+
+    @Test
+    public void audioPlayerRemoveFile() {
+        FileDisplayActivity sut = activityRule.launchActivity(null);
+
+        sut.tryStopPlaying(new OCFile("/test.mp3"));
+
+        longSleep();
+
+        Assert.assertTrue(true); // if we reach this, everything is ok
+    }
 }

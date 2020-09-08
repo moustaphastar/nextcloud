@@ -131,6 +131,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
@@ -1759,9 +1760,10 @@ public class FileDisplayActivity extends FileActivity
         }
     }
 
-    private void tryStopPlaying(OCFile file) {
+    @VisibleForTesting
+    public void tryStopPlaying(OCFile file) {
         // placeholder for stop-on-delete future code
-        if(mPlayerConnection != null) {
+        if (mPlayerConnection != null) {
             mPlayerConnection.stop(file);
         }
     }
