@@ -22,7 +22,6 @@
 package com.owncloud.android.ui.activity
 
 import androidx.test.espresso.intent.rule.IntentsTestRule
-import com.facebook.testing.screenshot.Screenshot
 import com.owncloud.android.AbstractIT
 import org.junit.Rule
 import org.junit.Test
@@ -33,9 +32,17 @@ class UploadFilesActivityIT : AbstractIT() {
 
     @Test
     // @ScreenshotTest // TODO re-enable and make sure that folder content on emulator is the same on all devices
-    fun open() {
+    fun noneSelected() {
         val sut: UploadFilesActivity = activityRule.launchActivity(null)
 
-        Screenshot.snapActivity(sut).record()
+        screenshot(sut)
+    }
+
+    fun fileSelected() {
+        val sut: UploadFilesActivity = activityRule.launchActivity(null)
+
+        // TODO select one
+
+        screenshot(sut)
     }
 }
