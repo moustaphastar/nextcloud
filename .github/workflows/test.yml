@@ -19,4 +19,4 @@ jobs:
                 uses: reactivecircus/android-emulator-runner@v1
                 with:
                     api-level: 29
-                    script: ./gradlew gplayDebugExecuteScreenshotTests
+                    script: ./gradlew gplayDebugExecuteScreenshotTests -Pandroid.testInstrumentationRunnerArguments.annotation=com.owncloud.android.utils.ScreenshotTest
