@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class ProviderMeta {
     public static final String DB_NAME = "filelist";
-    public static final int DB_VERSION = 59;
+    public static final int DB_VERSION = 60;
 
     private ProviderMeta() {
         // No instance
@@ -209,6 +209,7 @@ public class ProviderMeta {
         public static final String CAPABILITIES_SERVER_COLOR = "server_color";
         public static final String CAPABILITIES_SERVER_TEXT_COLOR = "server_text_color";
         public static final String CAPABILITIES_SERVER_ELEMENT_COLOR = "server_element_color";
+        public static final String CAPABILITIES_SERVER_LOGO = "server_logo";
         public static final String CAPABILITIES_SERVER_BACKGROUND_URL = "background_url";
         public static final String CAPABILITIES_SERVER_SLOGAN = "server_slogan";
         public static final String CAPABILITIES_SERVER_BACKGROUND_DEFAULT = "background_default";

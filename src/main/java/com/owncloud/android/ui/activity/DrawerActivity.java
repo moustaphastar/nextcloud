@@ -40,12 +40,15 @@ import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.material.button.MaterialButton;
@@ -73,7 +76,9 @@ import com.owncloud.android.lib.common.operations.RemoteOperation;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.files.SearchRemoteOperation;
+import com.owncloud.android.lib.resources.status.CapabilityBooleanType;
 import com.owncloud.android.lib.resources.status.OCCapability;
+import com.owncloud.android.lib.resources.status.OwnCloudVersion;
 import com.owncloud.android.lib.resources.users.GetUserInfoRemoteOperation;
 import com.owncloud.android.operations.GetCapabilitiesOperation;
 import com.owncloud.android.ui.activities.ActivitiesActivity;
@@ -101,6 +106,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -821,6 +827,91 @@ public abstract class DrawerActivity extends ToolbarActivity
         }
     }
 
+    public void updateHeaderBackground() {
+        if (getAccount() != null &&
+            getStorageManager().getCapability(getAccount().name).getServerBackground() != null) {
+            final ViewGroup navigationHeader = (ViewGroup) findNavigationViewChildById(R.id.drawer_header_view);
+
+            if (navigationHeader != null) {
+                OCCapability capability = getStorageManager().getCapability(getAccount().name);
+                String backgroundUrl = capability.getServerBackground();
+                String logoUrl = capability.getServerLogo();
+                CapabilityBooleanType backgroundDefault = capability.getServerBackgroundDefault();
+                CapabilityBooleanType backgroundPlain = capability.getServerBackgroundPlain();
+                int primaryColor = ThemeUtils.primaryColor(getAccount(), false, this);
+
+                // background image
+                if (backgroundDefault.isFalse() && (URLUtil.isValidUrl(backgroundUrl) || backgroundUrl.isEmpty())) {
+                    SimpleTarget target = new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(Drawable resource, GlideAnimation glideAnimation) {
+                            setNavigationHeaderBackground(resource, primaryColor, navigationHeader);
+                        }
+
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            setNavigationHeaderBackground(null, primaryColor, navigationHeader);
+                        }
+                    };
+
+                    int backgroundResource;
+                    OwnCloudVersion ownCloudVersion = accountManager.getServerVersion(getAccount());
+                    if (ownCloudVersion.compareTo(OwnCloudVersion.nextcloud_18) >= 0) {
+                        backgroundResource = R.drawable.background_nc18;
+                    } else {
+                        backgroundResource = R.drawable.background;
+                    }
+
+                    Glide.with(this)
+                        .load(backgroundUrl)
+                        .placeholder(backgroundResource)
+                        .error(backgroundResource)
+                        .crossFade()
+                        .into(target);
+                } else {
+                    setNavigationHeaderBackground(null, primaryColor, navigationHeader);
+                }
+
+                // Logo
+                SimpleTarget target = new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, GlideAnimation glideAnimation) {
+                        setNavigationHeaderLogo(resource, navigationHeader);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        setNavigationHeaderLogo(errorDrawable, navigationHeader);
+                    }
+                };
+
+                Glide.with(this)
+                    .load(logoUrl)
+                    .placeholder(R.drawable.nextcloud_logo)
+                    .error(R.drawable.nextcloud_logo)
+                    .crossFade()
+                    .into(target);
+            }
+        }
+    }
+
+    private void setNavigationHeaderLogo(Drawable logo, ViewGroup navigationHeader) {
+        final ImageView logoView = navigationHeader.findViewById(R.id.drawer_header_logo);
+
+        if (logo != null) {
+            logoView.setImageDrawable(logo);
+        }
+    }
+
+    private void setNavigationHeaderBackground(@Nullable Drawable background, int color, ViewGroup navigationHeader) {
+        final FrameLayout backgroundView = navigationHeader.findViewById(R.id.drawer_header_view);
+        backgroundView.setBackgroundColor(color);
+
+        if (background != null) {
+            backgroundView.setBackground(background);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -867,6 +958,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         }
         updateExternalLinksInDrawer();
         updateQuotaLink();
+        updateHeaderBackground();
     }
 
     @Override
@@ -917,6 +1009,22 @@ public abstract class DrawerActivity extends ToolbarActivity
                 preferences.setLockTimestamp(0);
                 finish();
             }
+        }
+    }
+
+    /**
+     * Finds a view that was identified by the id attribute from the drawer header.
+     *
+     * @param id the view's id
+     * @return The view if found or <code>null</code> otherwise.
+     */
+    private View findNavigationViewChildById(int id) {
+        NavigationView view = findViewById(R.id.nav_view);
+
+        if (view != null) {
+            return view.getHeaderView(0).findViewById(id);
+        } else {
+            return null;
         }
     }
 

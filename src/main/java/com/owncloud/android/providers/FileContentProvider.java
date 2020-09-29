@@ -783,6 +783,7 @@ public class FileContentProvider extends ContentProvider {
                        + ProviderTableMeta.CAPABILITIES_SERVER_TEXT_COLOR + TEXT
                        + ProviderTableMeta.CAPABILITIES_SERVER_ELEMENT_COLOR + TEXT
                        + ProviderTableMeta.CAPABILITIES_SERVER_SLOGAN + TEXT
+                       + ProviderTableMeta.CAPABILITIES_SERVER_LOGO + TEXT
                        + ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_URL + TEXT
                        + ProviderTableMeta.CAPABILITIES_END_TO_END_ENCRYPTION + INTEGER
                        + ProviderTableMeta.CAPABILITIES_ACTIVITY + INTEGER
@@ -2255,6 +2256,24 @@ public class FileContentProvider extends ContentProvider {
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.OCSHARES_TABLE_NAME +
                                    ADD_COLUMN + ProviderTableMeta.OCSHARES_SHARE_LABEL + " TEXT ");
+
+                    upgraded = true;
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            if (!upgraded) {
+                Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
+            }
+
+            if (oldVersion < 60 && newVersion >= 60) {
+                Log_OC.i(SQL, "Entering in the #60 add server logo to capabilities table");
+                db.beginTransaction();
+                try {
+                    db.execSQL(ALTER_TABLE + ProviderTableMeta.CAPABILITIES_TABLE_NAME +
+                                   ADD_COLUMN + ProviderTableMeta.CAPABILITIES_SERVER_LOGO + " TEXT ");
 
                     upgraded = true;
                     db.setTransactionSuccessful();

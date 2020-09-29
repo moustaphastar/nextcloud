@@ -2027,6 +2027,7 @@ public class FileDataStorageManager {
                           capability.getServerTextColor());
         contentValues.put(ProviderTableMeta.CAPABILITIES_SERVER_ELEMENT_COLOR,
                           capability.getServerElementColor());
+        contentValues.put(ProviderTableMeta.CAPABILITIES_SERVER_LOGO, capability.getServerLogo());
         contentValues.put(ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_URL,
                           capability.getServerBackground());
         contentValues.put(ProviderTableMeta.CAPABILITIES_SERVER_SLOGAN,
@@ -2156,6 +2157,7 @@ public class FileDataStorageManager {
             capability.setServerColor(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_COLOR));
             capability.setServerTextColor(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_TEXT_COLOR));
             capability.setServerElementColor(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_ELEMENT_COLOR));
+            capability.setServerLogo(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_LOGO));
             capability.setServerBackground(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_BACKGROUND_URL));
             capability.setServerSlogan(getString(cursor, ProviderTableMeta.CAPABILITIES_SERVER_SLOGAN));
             capability.setEndToEndEncryption(getBoolean(cursor, ProviderTableMeta.CAPABILITIES_END_TO_END_ENCRYPTION));
