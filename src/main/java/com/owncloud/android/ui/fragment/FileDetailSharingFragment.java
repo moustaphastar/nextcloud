@@ -179,8 +179,8 @@ public class FileDetailSharingFragment extends Fragment implements ShareeListAda
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 
