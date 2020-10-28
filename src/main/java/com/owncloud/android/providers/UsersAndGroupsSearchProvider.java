@@ -36,8 +36,6 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.nextcloud.client.account.Status;
-import com.nextcloud.client.account.StatusType;
 import com.nextcloud.client.account.User;
 import com.nextcloud.client.account.UserAccountManager;
 import com.owncloud.android.R;
@@ -48,6 +46,8 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.shares.GetShareesRemoteOperation;
 import com.owncloud.android.lib.resources.shares.ShareType;
+import com.owncloud.android.lib.resources.users.Status;
+import com.owncloud.android.lib.resources.users.StatusType;
 import com.owncloud.android.ui.TextDrawable;
 import com.owncloud.android.utils.BitmapUtils;
 import com.owncloud.android.utils.ErrorMessageAdapter;
@@ -73,10 +73,14 @@ import androidx.annotation.Nullable;
 import dagger.android.AndroidInjection;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import static com.owncloud.android.lib.resources.shares.GetShareesRemoteOperation.PROPERTY_CLEAR_AT;
+import static com.owncloud.android.lib.resources.shares.GetShareesRemoteOperation.PROPERTY_ICON;
+import static com.owncloud.android.lib.resources.shares.GetShareesRemoteOperation.PROPERTY_MESSAGE;
+import static com.owncloud.android.lib.resources.shares.GetShareesRemoteOperation.PROPERTY_STATUS;
+
 
 /**
- * Content provider for search suggestions, to search for users and groups existing in an ownCloud
- * server.
+ * Content provider for search suggestions, to search for users and groups existing in an ownCloud server.
  */
 public class UsersAndGroupsSearchProvider extends ContentProvider {
 
@@ -112,7 +116,7 @@ public class UsersAndGroupsSearchProvider extends ContentProvider {
     @Inject
     protected UserAccountManager accountManager;
 
-    private static Map<String, ShareType> sShareTypes = new HashMap<>();
+    private static final Map<String, ShareType> sShareTypes = new HashMap<>();
 
     public static ShareType getShareType(String authority) {
 
@@ -181,13 +185,10 @@ public class UsersAndGroupsSearchProvider extends ContentProvider {
         Log_OC.d(TAG, "query received in thread " + Thread.currentThread().getName());
 
         int match = mUriMatcher.match(uri);
-        switch (match) {
-            case SEARCH:
-                return searchForUsersOrGroups(uri);
-
-            default:
-                return null;
+        if (match == SEARCH) {
+            return searchForUsersOrGroups(uri);
         }
+        return null;
     }
 
     private Cursor searchForUsersOrGroups(Uri uri) {
@@ -258,15 +259,17 @@ public class UsersAndGroupsSearchProvider extends ContentProvider {
                     String shareWith = value.getString(GetShareesRemoteOperation.PROPERTY_SHARE_WITH);
 
                     Status status;
-                    JSONObject statusObject = item.optJSONObject("status");
+                    JSONObject statusObject = item.optJSONObject(PROPERTY_STATUS);
 
                     if (statusObject != null) {
-                        status = new Status(StatusType.valueOf(statusObject.getString("status")),
-                                            statusObject.isNull("message") ? "" : statusObject.getString("message"),
-                                            statusObject.isNull("icon") ? "" : statusObject.getString("icon"),
-                                            statusObject.isNull("clearAt") ? "" : statusObject.getString("clearAt"));
+                        status = new Status(
+                            StatusType.valueOf(statusObject.getString(PROPERTY_STATUS)),
+                            statusObject.isNull(PROPERTY_MESSAGE) ? "" : statusObject.getString(PROPERTY_MESSAGE),
+                            statusObject.isNull(PROPERTY_ICON) ? "" : statusObject.getString(PROPERTY_ICON),
+                            statusObject.isNull(PROPERTY_CLEAR_AT) ? -1 : statusObject.getInt(PROPERTY_CLEAR_AT)
+                        );
                     } else {
-                        status = new Status(StatusType.Unknown, "", "", "");
+                        status = new Status(StatusType.OFFLINE, "", "", -1);
                     }
 
                     switch (type) {
@@ -295,7 +298,8 @@ public class UsersAndGroupsSearchProvider extends ContentProvider {
 
                         case USER:
                             displayName = userName;
-                            subline = status.getMessage().isEmpty() ? null : status.getMessage();
+                            subline = (status.getMessage() == null || status.getMessage().isEmpty()) ? null :
+                                status.getMessage();
                             Uri.Builder builder =
                                 Uri.parse("content://com.nextcloud.android.providers.UsersAndGroupsSearchProvider/icon")
                                     .buildUpon();

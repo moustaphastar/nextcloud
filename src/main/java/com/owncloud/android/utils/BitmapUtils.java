@@ -34,10 +34,10 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.nextcloud.client.account.StatusType;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.R;
 import com.owncloud.android.lib.common.utils.Log_OC;
+import com.owncloud.android.lib.resources.users.StatusType;
 import com.owncloud.android.ui.StatusDrawable;
 
 import org.apache.commons.codec.binary.Hex;
@@ -432,7 +432,7 @@ public final class BitmapUtils {
         StatusDrawable statusDrawable;
         if (TextUtils.isEmpty(icon)) {
             switch (status) {
-                case Dnd:
+                case DND:
                     statusDrawable = new StatusDrawable(R.drawable.ic_user_status_dnd, statusSize, context);
                     statusDrawable.setBounds(width / 2,
                                              width / 2,
@@ -440,7 +440,7 @@ public final class BitmapUtils {
                                              width);
                     break;
 
-                case Online:
+                case ONLINE:
                     statusDrawable = new StatusDrawable(new Color(255, 73, 179, 130), statusSize);
                     statusDrawable.setBounds(width,
                                              width,
@@ -448,7 +448,7 @@ public final class BitmapUtils {
                                              width);
                     break;
 
-                case Away:
+                case AWAY:
                     statusDrawable = new StatusDrawable(R.drawable.ic_user_status_away, statusSize, context);
                     statusDrawable.setBounds(width / 2,
                                              width / 2,
